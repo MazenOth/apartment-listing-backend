@@ -29,4 +29,21 @@ export class ApartmentsService {
     }
   }
 
+  async findOne(id: number): Promise<Apartment | null> {
+    try {
+      const apartment = await this.apartmentModel.findByPk(id);
+      if (!apartment) throw new Error('Apartment not found');
+      return apartment;
+    } catch (error) {
+      throw new Error('Error fetching apartment details');
+    }
+  }
+
+  async create(data: Partial<Apartment>): Promise<Apartment> {
+    try {
+      return this.apartmentModel.create(data);
+    } catch (error) {
+      throw new Error('Error creating apartment');
+    }
+  }
 }
