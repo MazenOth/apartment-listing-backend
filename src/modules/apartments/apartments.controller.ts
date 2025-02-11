@@ -23,4 +23,24 @@ export class ApartmentsController {
       throw new BadRequestException(error.message);
     }
   }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string): Promise<Apartment> {
+    try {
+      const apartment = await this.apartmentsService.findOne(+id);
+      if (!apartment) throw new NotFoundException('Apartment not found');
+      return apartment;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @Post()
+  async create(@Body() apartment: Partial<Apartment>): Promise<Apartment> {
+    try {
+      return await this.apartmentsService.create(apartment);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }
