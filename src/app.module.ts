@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
 import { Apartment } from './models/apartment.model';
+import { ApartmentsModule } from './modules/apartments/apartments.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { Apartment } from './models/apartment.model';
       autoLoadModels: true,
       synchronize: true,
     }),
+    ApartmentsModule,
   ],
   controllers: [],
   providers: [],
