@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
-import { Apartment } from '../../models/apartment.model';
+import { Apartment, Project } from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class ApartmentsService {
@@ -23,7 +24,7 @@ export class ApartmentsService {
             [Op.or]: [
               { unitName: { [Op.like]: `%${search}%` } },
               { unitNumber: { [Op.like]: `%${search}%` } },
-              { project: { [Op.like]: `%${search}%` } },
+              { '$project.projectName$': { [Op.like]: `%${search}%` } },
             ],
           }
         : {};
@@ -33,6 +34,24 @@ export class ApartmentsService {
           where: whereClause,
           limit,
           offset,
+          attributes: [
+            'id',
+            'unitName',
+            'unitNumber',
+            'description',
+            'sizeSQM',
+            'price',
+            'bedrooms',
+            'bathrooms',
+            [Sequelize.col('Project.projectName'), 'projectName'],
+          ],
+          include: [
+            {
+              model: Project,
+              attributes: [],
+            },
+          ],
+          order: [['createdAt', 'DESC']],
         });
 
       return { apartments, totalApartments };
@@ -43,7 +62,25 @@ export class ApartmentsService {
 
   async findOne(id: number): Promise<Apartment | null> {
     try {
-      const apartment = await this.apartmentModel.findByPk(id);
+      const apartment = await this.apartmentModel.findByPk(id, {
+        attributes: [
+          'id',
+          'unitName',
+          'unitNumber',
+          'description',
+          'sizeSQM',
+          'price',
+          'bedrooms',
+          'bathrooms',
+          [Sequelize.col('Project.projectName'), 'projectName'],
+        ],
+        include: [
+          {
+            model: Project,
+            attributes: [],
+          },
+        ],
+      });
       if (!apartment) throw new Error('Apartment not found');
       return apartment;
     } catch (error) {
