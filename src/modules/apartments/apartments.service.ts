@@ -10,22 +10,34 @@ export class ApartmentsService {
     private apartmentModel: typeof Apartment,
   ) {}
 
-  async findAll(search?: string): Promise<Apartment[]> {
+  async findAll(
+    search?: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ apartments: Apartment[]; totalApartments: number }> {
     try {
-      if (search) {
-        return this.apartmentModel.findAll({
-          where: {
+      const offset = (page - 1) * limit;
+
+      const whereClause = search
+        ? {
             [Op.or]: [
               { unitName: { [Op.like]: `%${search}%` } },
               { unitNumber: { [Op.like]: `%${search}%` } },
               { project: { [Op.like]: `%${search}%` } },
             ],
-          },
+          }
+        : {};
+
+      const { rows: apartments, count: totalApartments } =
+        await this.apartmentModel.findAndCountAll({
+          where: whereClause,
+          limit,
+          offset,
         });
-      }
-      return this.apartmentModel.findAll();
+
+      return { apartments, totalApartments };
     } catch (error) {
-      throw new Error('Error fetching apartments');
+      throw new Error(`Error fetching apartments: ${error.message}`);
     }
   }
 
@@ -35,7 +47,7 @@ export class ApartmentsService {
       if (!apartment) throw new Error('Apartment not found');
       return apartment;
     } catch (error) {
-      throw new Error('Error fetching apartment details');
+      throw new Error(`Error fetching apartment details: ${error.message}`);
     }
   }
 
@@ -43,7 +55,7 @@ export class ApartmentsService {
     try {
       return this.apartmentModel.create(data);
     } catch (error) {
-      throw new Error('Error creating apartment');
+      throw new Error(`Error creating apartment: ${error.message}`);
     }
   }
 }
