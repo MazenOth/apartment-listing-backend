@@ -1,4 +1,12 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  ForeignKey,
+  BelongsTo,
+} from 'sequelize-typescript';
+import { Project } from './project.model';
 
 @Table
 export class Apartment extends Model {
@@ -13,12 +21,6 @@ export class Apartment extends Model {
     allowNull: false,
   })
   unitNumber: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  project: string;
 
   @Column({
     type: DataType.TEXT,
@@ -49,4 +51,14 @@ export class Apartment extends Model {
     allowNull: false,
   })
   bathrooms: number;
+
+  @ForeignKey(() => Project)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  projectId: number;
+
+  @BelongsTo(() => Project)
+  project: Project;
 }
