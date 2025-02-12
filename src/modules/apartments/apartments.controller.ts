@@ -7,6 +7,7 @@ import {
   Query,
   BadRequestException,
   NotFoundException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApartmentsService } from './apartments.service';
 import { Apartment } from '../../models/apartment.model';
@@ -16,9 +17,13 @@ export class ApartmentsController {
   constructor(private readonly apartmentsService: ApartmentsService) {}
 
   @Get()
-  async findAll(@Query('search') search?: string): Promise<Apartment[]> {
+  async findAll(
+    @Query('search') search?: string,
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('limit', ParseIntPipe) limit: number = 10,
+  ): Promise<{ apartments: Apartment[]; totalApartments: number }> {
     try {
-      return await this.apartmentsService.findAll(search);
+      return await this.apartmentsService.findAll(search, page, limit);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
