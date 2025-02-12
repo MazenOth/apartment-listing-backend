@@ -10,7 +10,7 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { ApartmentsService } from './apartments.service';
-import { Apartment } from '../../models/apartment.model';
+import { Apartment } from '../../models';
 
 @Controller('apartments')
 export class ApartmentsController {
