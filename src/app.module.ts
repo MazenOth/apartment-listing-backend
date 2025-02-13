@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
-import { Apartment } from './models/apartment.model';
+import { Apartment, Project } from './models';
 import { ApartmentsModule } from './modules/apartments/apartments.module';
+import { ProjectsModule } from './modules/projects/projects.module';
 
 @Module({
   imports: [
@@ -14,11 +15,12 @@ import { ApartmentsModule } from './modules/apartments/apartments.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      models: [Apartment],
+      models: [Apartment, Project],
       autoLoadModels: true,
       synchronize: true,
     }),
     ApartmentsModule,
+    ProjectsModule,
   ],
   controllers: [],
   providers: [],
