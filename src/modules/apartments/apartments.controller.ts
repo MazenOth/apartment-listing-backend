@@ -8,9 +8,12 @@ import {
   BadRequestException,
   NotFoundException,
   ParseIntPipe,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApartmentsService } from './apartments.service';
 import { Apartment } from '../../models';
+import { CreateApartmentDto } from './dto';
 
 @Controller('apartments')
 export class ApartmentsController {
@@ -30,9 +33,9 @@ export class ApartmentsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Apartment> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Apartment> {
     try {
-      const apartment = await this.apartmentsService.findOne(+id);
+      const apartment = await this.apartmentsService.findOne(id);
       if (!apartment) throw new NotFoundException('Apartment not found');
       return apartment;
     } catch (error) {
@@ -41,9 +44,10 @@ export class ApartmentsController {
   }
 
   @Post()
-  async create(@Body() apartment: Partial<Apartment>): Promise<Apartment> {
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async create(@Body() apartmentDto: CreateApartmentDto): Promise<Apartment> {
     try {
-      return await this.apartmentsService.create(apartment);
+      return await this.apartmentsService.create(apartmentDto);
     } catch (error) {
       throw new BadRequestException(error.message);
     }

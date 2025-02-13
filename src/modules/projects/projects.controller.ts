@@ -4,9 +4,12 @@ import {
   Post,
   Body,
   BadRequestException,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { Project } from '../../models';
+import { CreateProjectDto } from './dto';
 
 @Controller('projects')
 export class ProjectsController {
@@ -22,7 +25,8 @@ export class ProjectsController {
   }
 
   @Post()
-  async create(@Body() project: Partial<Project>): Promise<Project> {
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async create(@Body() project: CreateProjectDto): Promise<Project> {
     try {
       return await this.projectsService.create(project);
     } catch (error) {
