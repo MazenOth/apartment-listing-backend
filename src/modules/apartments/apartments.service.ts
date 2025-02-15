@@ -43,12 +43,12 @@ export class ApartmentsService {
             'price',
             'bedrooms',
             'bathrooms',
-            [Sequelize.col('Projects.projectName'), 'projectName'],
+            [Sequelize.col('project.projectName'), 'projectName'],
           ],
           include: [
             {
               model: Project,
-              as: 'Projects',
+              as: 'project',
               attributes: [],
             },
           ],
@@ -73,12 +73,12 @@ export class ApartmentsService {
           'price',
           'bedrooms',
           'bathrooms',
-          [Sequelize.col('Projects.projectName'), 'projectName'],
+          [Sequelize.col('project.projectName'), 'projectName'],
         ],
         include: [
           {
             model: Project,
-            as: 'Projects',
+            as: 'project',
             attributes: [],
           },
         ],
